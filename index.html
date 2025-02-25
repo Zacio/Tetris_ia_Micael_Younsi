@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tetris Duel (Vitesse x10 au level 10)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Tetris Duel : Humain vs IA</h1>
+
+<!-- Tableau des scores, niveaux, bonus -->
+<div id="scoreboard">
+  <div class="score-box">
+    <h2>Humain</h2>
+    <p>Score : <span id="score-human">0</span></p>
+    <p>Niveau : <span id="level-human">1</span></p>
+    <p>Bonus : <span id="bonus-human">Aucun</span></p>
+  </div>
+  <div class="score-box">
+    <h2>IA</h2>
+    <p>Score : <span id="score-ai">0</span></p>
+    <p>Niveau : <span id="level-ai">1</span></p>
+    <p>Bonus : <span id="bonus-ai">Aucun</span></p>
+  </div>
+</div>
+
+<!-- Deux grilles (Humain / IA) -->
+<div id="board-container">
+
+  <!-- Grille Humain -->
+  <div class="board-wrapper">
+    <canvas id="canvas-human" width="200" height="400"></canvas>
+    <!-- Overlay Game Over (Humain) -->
+    <div class="game-over-screen" id="game-over-screen-human">
+      <h2 id="game-over-message-human"></h2>
+      <button id="reload-button-human">Rejouer</button>
+    </div>
+  </div>
+
+  <!-- Grille IA -->
+  <div class="board-wrapper">
+    <canvas id="canvas-ai" width="200" height="400"></canvas>
+    <!-- Overlay Game Over (IA) -->
+    <div class="game-over-screen" id="game-over-screen-ai">
+      <h2 id="game-over-message-ai"></h2>
+      <button id="reload-button-ai">Rejouer</button>
+    </div>
+  </div>
+
+</div>
+
+<p id="instructions">
+  Contrôles :  
+  - Flèches gauche/droite : déplacer la pièce  
+  - Flèche bas : descente rapide  
+  - Flèche haut : rotation  
+  - Touche B : activer un bonus (si disponible)  
+</p>
+
+<script src="script.js"></script>
+</body>
+</html>
