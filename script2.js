@@ -5,7 +5,7 @@ const COLS = 10;
 const ROWS = 20;
 const BLOCK_SIZE = 20;
 
-/* Tetrominos standards */
+/* Pièces Tetris standards */
 const TETROMINOS = {
   I: [[1,1,1,1]],
   O: [[1,1],[1,1]],
@@ -41,20 +41,20 @@ const SCORE_BONUS_3 = 200;
 const SCORE_BONUS_4 = 300;
 
 /****************************************************
- * SONS EFFETS
+ * SONS D'EFFETS
  ****************************************************/
 const landSound = new Audio("bgs/land.ogg");
 const lineSound = new Audio("bgs/line.ogg");
 const gameoverSound = new Audio("bgs/gameover.ogg");
 
 /****************************************************
- * MUSIQUES GLOBALES (2 pistes)
+ * MUSIQUES GLOBALES
  ****************************************************/
-const music1 = new Audio("ost/music1.mp3"); // pour niveaux 1..3
-const music2 = new Audio("ost/music2.mp3"); // pour niveau >=4
+const music1 = new Audio("ost/music1.mp3"); // pour niveaux 1..3 (Humain)
+const music2 = new Audio("ost/music2.mp3"); // dès le niveau 4 (Humain)
 music1.loop = true;
 music2.loop = true;
-let music2Active = false; // Pour savoir si on a déjà switché vers music2
+let music2Active = false; // pour savoir si on a déjà lancé music2
 
 /****************************************************
  * CLASS PLAYER
@@ -63,17 +63,17 @@ class Player {
   constructor(context, isAI = false) {
     this.context = context;
     this.isAI = isAI;
-
     this.isGameOver = false;
+
     this.resetBoard();
 
-    // Score / Niveaux
+    // Scores / Niveau
     this.score = 0;
     this.level = 1;
-    this.scoreForNextLevel = 2000; // passe un niveau tous les 2000 pts
+    this.scoreForNextLevel = 2000;
     this.inventory = [];
 
-    // Pièce courante
+    // Pièce en cours
     this.nextEasyPiece = false;
     this.currentPiece = null;
     this.pos = { x: 0, y: 0 };
@@ -98,8 +98,8 @@ class Player {
   getRandomPiece() {
     if (this.nextEasyPiece) {
       this.nextEasyPiece = false;
-      const easy = ['I','O'];
-      const k = easy[Math.floor(Math.random()*easy.length)];
+      const easyKeys = ['I','O'];
+      const k = easyKeys[Math.floor(Math.random()*easyKeys.length)];
       return { shape: TETROMINOS[k], type: k };
     }
     const keys = Object.keys(TETROMINOS);
@@ -112,7 +112,7 @@ class Player {
     this.pos.x = Math.floor(COLS/2) - Math.floor(this.currentPiece.shape[0].length/2);
     this.pos.y = 0;
 
-    // Si déjà collision => Game Over
+    // Collision au spawn => Game Over
     if (this.collision(this.currentPiece.shape, this.pos)) {
       triggerPlayerGameOver(this, this.isAI ? "IA" : "Humain");
     }
@@ -128,7 +128,7 @@ class Player {
         if (shape[y][x]) {
           const nx = offset.x + x;
           const ny = offset.y + y;
-          if (nx<0 || nx>=COLS || ny>=ROWS) return true;
+          if (nx<0||nx>=COLS||ny>=ROWS) return true;
           if (ny>=0 && this.board[ny][nx]) return true;
         }
       }
@@ -169,6 +169,7 @@ class Player {
       this.spawnPiece();
       return;
     }
+
     if (this.lastDropTime > currentDrop) {
       this.pos.y++;
       if (this.collision(this.currentPiece.shape, this.pos)) {
@@ -178,16 +179,19 @@ class Player {
         this.mergePiece(this.currentPiece.shape, this.pos);
 
         const linesCleared = this.clearLines();
-        if (linesCleared>0){
+        if (linesCleared>0) {
+          // destruction de lignes
           lineSound.play();
-          if(linesCleared===1){
-            this.score+=(SCORE_PER_LINE*this.level);
-          } else if(linesCleared===2){
-            this.score+=((SCORE_PER_LINE*2)*this.level)+SCORE_BONUS_2;
-          } else if(linesCleared===3){
-            this.score+=((SCORE_PER_LINE*3)*this.level)+SCORE_BONUS_3;
-          } else if(linesCleared===4){
-            this.score+=((SCORE_PER_LINE*4)*this.level)+SCORE_BONUS_4;
+
+          // scoring
+          if (linesCleared===1) {
+            this.score += (SCORE_PER_LINE * this.level);
+          } else if (linesCleared===2) {
+            this.score += (SCORE_PER_LINE*2*this.level) + SCORE_BONUS_2;
+          } else if (linesCleared===3) {
+            this.score += (SCORE_PER_LINE*3*this.level) + SCORE_BONUS_3;
+          } else if (linesCleared===4) {
+            this.score += (SCORE_PER_LINE*4*this.level) + SCORE_BONUS_4;
           }
         }
         this.handleSpecialRules(linesCleared);
@@ -198,41 +202,48 @@ class Player {
   }
 
   handleSpecialRules(linesCleared) {
-    if(linesCleared===2) {
-      this._giveEasyPieceToOpponent=true;
+    if (linesCleared===2) {
+      this._giveEasyPieceToOpponent = true;
     }
-    if(linesCleared===4) {
-      this._wantLineSwap=true;
+    if (linesCleared===4) {
+      this._wantLineSwap = true;
     }
     this.checkLevelUp();
-    if(Math.floor(this.score/1000) > Math.floor((this.score-(linesCleared*50))/1000)){
-      this._triggerPauseDouceur=true;
+    if (Math.floor(this.score/1000) > Math.floor((this.score-(linesCleared*50))/1000)) {
+      this._triggerPauseDouceur = true;
     }
     this.checkForNewBonus();
   }
 
   checkLevelUp() {
-    while(this.score >= this.scoreForNextLevel && this.level<10){
+    while (this.score>=this.scoreForNextLevel && this.level<10) {
       this.level++;
       console.log(`Le joueur ${this.isAI?'IA':'Humain'} passe au niveau ${this.level}`);
       this.handleLevelReward(this.level);
       this.scoreForNextLevel+=2000;
+
+      // == NOUVEAU : si c'est le Joueur Humain qui atteint level 4 => on switch music
+      if (!this.isAI && this.level===4 && !music2Active) {
+        music2Active=true;
+        stopMusic1();
+        playMusic2();
+      }
     }
   }
 
-  handleLevelReward(lvl){
+  handleLevelReward(lvl) {
     const item = getItemForLevel(lvl);
-    if(item){
+    if (item) {
       console.log(`Le joueur ${this.isAI?'IA':'Humain'} gagne : ${item}`);
       this.inventory.push(item);
     }
   }
 
-  checkForNewBonus(){
-    while(this.score>=this.nextBonusThreshold){
-      if(this.bonuses.length===0){
-        if(Math.random()<0.5){
-          const b=this.getRandomBonus();
+  checkForNewBonus() {
+    while (this.score>=this.nextBonusThreshold) {
+      if (this.bonuses.length===0) {
+        if (Math.random()<0.5) {
+          const b = this.getRandomBonus();
           this.bonuses.push(b);
           console.log(`BONUS pour ${this.isAI?'IA':'Humain'} : ${b}`);
         }
@@ -241,20 +252,22 @@ class Player {
     }
   }
 
-  getRandomBonus(){
-    const bonusList=['CLEAR_LINE','SLOW_TIME','SWITCH_PIECE'];
+  getRandomBonus() {
+    const bonusList = ['CLEAR_LINE','SLOW_TIME','SWITCH_PIECE'];
     return bonusList[Math.floor(Math.random()*bonusList.length)];
   }
 
-  activateBonus(){
-    if(this.isGameOver)return;
-    if(!this.bonuses.length){
+  // ICI, on change la pièce en O ou I (aléatoire) quand c'est SWITCH_PIECE
+  activateBonus() {
+    if (this.isGameOver) return;
+    if (!this.bonuses.length) {
       console.log("Aucun bonus à activer.");
       return;
     }
-    const b=this.bonuses.shift();
-    console.log(`Bonus activé : ${b}`);
-    switch(b){
+    const b = this.bonuses.shift();
+    console.log(`Bonus activé : ${b} par ${this.isAI?'IA':'Humain'}`);
+
+    switch(b) {
       case 'CLEAR_LINE':
         this.clearOneLine();
         break;
@@ -262,18 +275,24 @@ class Player {
         triggerPauseDouceur();
         break;
       case 'SWITCH_PIECE':
-        if(this.currentPiece){
-          this.currentPiece={shape:TETROMINOS['O'],type:'O'};
+        // On change la pièce courante en O ou I (aléatoire 50%)
+        if (this.currentPiece) {
+          const randType = (Math.random()<0.5) ? 'O' : 'I';
+          this.currentPiece = {
+            shape: TETROMINOS[randType],
+            type: randType
+          };
+          console.log(`Pièce courante changée en ${randType}`);
         }
         break;
       default:
-        console.log('Bonus inconnu',b);
+        console.log('Bonus inconnu :', b);
     }
   }
 
-  clearOneLine(){
-    for(let y=ROWS-1;y>=0;y--){
-      if(!this.board[y].every(c=>c===0)){
+  clearOneLine() {
+    for (let y=ROWS-1; y>=0; y--) {
+      if (!this.board[y].every(c=>c===0)) {
         this.board.splice(y,1);
         this.board.unshift(Array(COLS).fill(0));
         console.log("CLEAR_LINE : une ligne effacée!");
@@ -282,13 +301,13 @@ class Player {
     }
   }
 
-  draw(){
-    if(this.isGameOver)return;
+  draw() {
+    if (this.isGameOver) return;
     this.context.clearRect(0,0,COLS*BLOCK_SIZE,ROWS*BLOCK_SIZE);
 
-    for(let y=0;y<ROWS;y++){
-      for(let x=0;x<COLS;x++){
-        const type=this.board[y][x];
+    for (let y=0;y<ROWS;y++){
+      for (let x=0;x<COLS;x++){
+        const type = this.board[y][x];
         if(type){
           this.drawBlock(x,y,COLORS[type]);
         }
@@ -333,7 +352,7 @@ function getItemForLevel(level){
 }
 
 /****************************************************
- * JOUEURS & AUTRES VARS
+ * JOUEURS
  ****************************************************/
 let canvasHuman, canvasAI;
 let ctxHuman, ctxAI;
@@ -345,59 +364,41 @@ let rainbowMode=false;
 let rainbowStart=0;
 
 /****************************************************
- * FONCTIONS MUSIQUE
+ * MUSIQUE
  ****************************************************/
 function playMusic1(){
   music1.currentTime=0;
-  music1.play().catch(err=>{
-    console.log("Music1 autoplay blocked:",err);
-  });
+  music1.loop=true;
+  music1.play().catch(err=>console.log("Music1 autoplay block:", err));
 }
-
 function stopMusic1(){
   music1.pause();
 }
-
 function playMusic2(){
   music2.currentTime=0;
-  music2.play().catch(err=>{
-    console.log("Music2 autoplay blocked:",err);
-  });
+  music2.loop=true;
+  music2.play().catch(err=>console.log("Music2 autoplay block:", err));
 }
-
 function stopMusic2(){
   music2.pause();
 }
 
-/**
- * Vérifie si un des joueurs est >=4 => switch sur music2
- */
-function updateMusicGlobal(){
-  if(!music2Active && (playerHuman.level>=4 || playerAI.level>=4)){
-    music2Active=true;
-    stopMusic1();
-    playMusic2();
-  }
-}
-
 /****************************************************
- * INIT : APPELÉ SEULEMENT APRÈS LE CLIC SUR "JOUER"
+ * INIT : APPELÉE APRÈS CLIC SUR "JOUER"
  ****************************************************/
 function init(){
-  // Récupérer les canvas
+  // Récup canvas
   canvasHuman=document.getElementById('canvas-human');
   canvasAI=document.getElementById('canvas-ai');
   ctxHuman=canvasHuman.getContext('2d');
   ctxAI=canvasAI.getContext('2d');
 
-  // Créer les players
+  // Création players
   playerHuman=new Player(ctxHuman,false);
   playerAI=new Player(ctxAI,true);
 
-  // Arc-en-ciel périodique
   setInterval(()=>{ startRainbowMode(); }, RAINBOW_PERIOD);
 
-  // IA : bonus auto aléatoire
   setInterval(()=>{
     if(!playerAI.isGameOver && playerAI.bonuses.length>0){
       if(Math.random()<0.3){
@@ -406,7 +407,7 @@ function init(){
     }
   },5000);
 
-  // Boutons "Rejouer"
+  // "Rejouer"
   document.getElementById('reload-button-human').addEventListener('click',()=>{
     location.reload();
   });
@@ -422,8 +423,7 @@ function init(){
  ****************************************************/
 function triggerPlayerGameOver(player, loserName){
   player.isGameOver=true;
-  // On joue le son "gameover" pour ce joueur
-  gameoverSound.play();
+  gameoverSound.play(); // On joue le son de game over
 
   if(loserName==='Humain'){
     document.getElementById('game-over-message-human').textContent=
@@ -451,12 +451,14 @@ function updateGame(timestamp){
     handleAI(playerAI);
   }
 
+  // Règles cross-joueurs
   handleCrossPlayerRules();
 
+  // Dessin
   playerHuman.draw();
   playerAI.draw();
 
-  // Score + bonus
+  // MAJ affichages
   document.getElementById('score-human').textContent=playerHuman.score;
   document.getElementById('level-human').textContent=playerHuman.level;
   document.getElementById('bonus-human').textContent=(playerHuman.bonuses.length
@@ -468,9 +470,6 @@ function updateGame(timestamp){
   document.getElementById('bonus-ai').textContent=(playerAI.bonuses.length
     ? playerAI.bonuses.join(', ')
     : 'Aucun');
-
-  // Musique: switch sur music2 si needed
-  updateMusicGlobal();
 
   // Arc-en-ciel
   if(rainbowMode){
@@ -487,7 +486,6 @@ function updateGame(timestamp){
  * CONTROLES CLAVIER (HUMAIN)
  ****************************************************/
 document.addEventListener('keydown',(e)=>{
-  // si pas init ou si gameOver => skip
   if(!playerHuman||playerHuman.isGameOver||!playerHuman.currentPiece)return;
   switch(e.code){
     case 'ArrowLeft':
@@ -533,6 +531,7 @@ function handleAI(ai){
   let foundAnyPlacement=false;
 
   const originalShape=ai.currentPiece.shape;
+
   for(let r=0;r<4;r++){
     const rotated=rotatePieceNTimes(originalShape,r);
     for(let x=-2;x<COLS+2;x++){
@@ -741,15 +740,13 @@ function swapLines(pA,pB){
   let fullLineIndex=-1;
   for(let y=ROWS-1;y>=0;y--){
     if(pA.board[y].every(c=>c!==0)){
-      fullLineIndex=y;
-      break;
+      fullLineIndex=y;break;
     }
   }
   let emptyLineIndex=-1;
   for(let y=ROWS-1;y>=0;y--){
     if(pB.board[y].every(c=>c===0)){
-      emptyLineIndex=y;
-      break;
+      emptyLineIndex=y;break;
     }
   }
   if(fullLineIndex>=0&&emptyLineIndex>=0){
@@ -777,17 +774,15 @@ function startRainbowMode(){
 }
 
 /****************************************************
- * ECOUTE DU BOUTON "JOUER"
+ * BOUTON "JOUER"
  ****************************************************/
-// On n'appelle PAS init() tant que l'utilisateur n'a pas cliqué
-const startButton = document.getElementById('start-button');
-startButton.addEventListener('click', () => {
+document.getElementById('start-button').addEventListener('click',()=>{
   // On cache le bouton
-  startButton.style.display = 'none';
+  document.getElementById('start-button').style.display='none';
 
-  // On lance la partie
+  // On init la partie
   init();
 
-  // On lance la musique 1
+  // On joue la musique1
   playMusic1();
 });
