@@ -1,0 +1,188 @@
+Prompt 1 : 
+fait moi un prompt pour ce projet à envoyer à o3-mini
+
+Projet : Tetris à deux joueurs (Humain vs IA)
+Tes étudiants doivent coder un Tetris en HTML, CSS et JavaScript, avec deux joueurs : un humain et une IA.
+Il faut une grille pour chaque joueur et un tableau des scores. Voici les détails avec des règles amusantes mais
+gentilles :
+Fonctionnalités principales
+Deux grilles
+Une pour le joueur humain, une pour l’IA, côte à côte.
+Contrôles
+Humain : flèches du clavier (gauche, droite, bas, haut pour tourner).
+IA : joue automatiquement avec une logique simple (ex. : placer les pièces au mieux sans trop
+réfléchir).
+Tableau des scores
+Points :
+50 par ligne.
+Bonus : 100 pour 2 lignes, 200 pour 3 lignes, 300 pour un Tetris (4 lignes).
+Affiche les scores en direct pour les deux joueurs.
+Règles fun (version soft)
+1. Cadeau surprise
+Quand un joueur complète 2 lignes d’un coup, l’adversaire reçoit une “pièce facile” (ex. : un
+carré ou une ligne droite) pour l’aider un peu.
+2. Pause douceur
+Tous les 1 000 points, les pièces tombent 20 % plus lentement pendant 10 secondes pour les
+deux joueurs – un petit répit pour souffler !
+3. Pièce rigolote
+Tous les 3 000 points, une pièce spéciale apparaît (ex. : une pièce en forme de cœur ou
+d’étoile), qui vaut 100 points bonus si elle est bien placée.
+4. Échange amical
+Si un joueur fait un Tetris (4 lignes), il peut échanger une de ses lignes pleines avec une ligne
+vide de l’adversaire – un coup de pouce mutuel !
+5. Arc-en-ciel
+Toutes les 2 minutes, les pièces changent de couleur pendant 20 secondes pour rendre le jeu
+plus joli (pas de piège, juste du fun visuel).
+Conseils pour les étudiants
+HTML :
+Utiliser deux <canvas> ou des grilles de <div> pour les terrains.
+CSS :
+Choisir des couleurs sympas pour les pièces.
+Ajouter une petite animation quand une ligne disparaît.
+JS :
+Gérer les grilles avec des tableaux 2D.
+Programmer une IA simple : elle pose les pièces là où ça “fit” le mieux.
+Utiliser un timer pour les règles temporaires (pause douceur, arc-en-ciel).
+Objectif
+Un Tetris compétitif mais sympa, où l’humain et l’IA s’amusent sans trop de stress. Le tableau des scores
+montre qui gagne, mais tout le monde passe un bon moment !
+
+prompt 2 
+Bonjour O3 Mini de ChatGPT !
+J’aimerais que tu me génères un projet complet pour créer un Tetris à deux joueurs (Humain vs IA) avec du HTML, du CSS et du JavaScript.
+
+Détails du projet
+Deux grilles
+
+Une pour le joueur humain.
+Une pour l’IA.
+Placées côte à côte.
+Contrôles
+
+Humain : flèches du clavier (gauche, droite, bas) et flèche haut pour faire pivoter la pièce.
+IA : la pièce se place automatiquement avec une logique simple (ex. trouver l’emplacement le plus optimal pour limiter les trous).
+Tableau des scores
+
+Points de base : 50 points par ligne détruite.
+Bonus :
++100 pour 2 lignes détruites en même temps,
++200 pour 3 lignes,
++300 pour un “Tetris” (4 lignes d’un coup).
+Affichage en temps réel : on doit voir les scores pour le joueur humain et pour l’IA.
+Règles fun (version « soft »)
+Cadeau surprise
+
+Quand un joueur détruit exactement 2 lignes d’un coup, l’adversaire reçoit une “pièce facile” (par exemple, un carré ou une ligne droite).
+Pause douceur
+
+Tous les 1000 points, la vitesse de chute des pièces diminue de 20 % pendant 10 secondes pour les deux joueurs, pour souffler un peu.
+Pièce rigolote
+
+Tous les 3000 points, une pièce spéciale (cœur, étoile, etc.) apparaît.
+Si elle est placée correctement (à définir), elle offre 100 points bonus.
+Échange amical
+
+Si un joueur réalise un Tetris (4 lignes), il peut échanger une de ses lignes pleines avec une ligne vide de l’adversaire.
+Arc-en-ciel
+
+Toutes les 2 minutes, les pièces changent de couleur pendant 20 secondes (effet purement visuel, pas de piège).
+Conseils de réalisation
+HTML
+
+Deux <canvas> ou deux grilles <div> pour représenter les deux terrains.
+CSS
+
+Des couleurs attrayantes pour les pièces.
+Une animation simple quand une ou plusieurs lignes sont détruites (par ex. clignotement ou fade-out).
+JavaScript
+
+Gérer chaque grille via un tableau 2D.
+Implémenter une IA basique (placer la pièce de façon à minimiser les espaces vides).
+Utiliser des timers pour les règles temporaires (pause douceur, arc-en-ciel).
+Gérer le score en direct, l’affichage et les bonus.
+Gérer les événements clavier pour le joueur humain (déplacement et rotation de la pièce).
+Objectif final
+Créer un Tetris convivial et amusant, où l’humain et l’IA peuvent s’affronter sans trop de stress. Le tableau des scores doit montrer clairement qui est en tête, mais l’expérience doit rester bienveillante et divertissante pour tout le monde !
+
+À générer :
+HTML : structure de base (grilles, tableau des scores, etc.).
+CSS : mise en forme des grilles, des pièces et des animations.
+JavaScript :
+Logique de jeu (déplacement, rotation, collision, lignes complètes).
+IA simple.
+Gestion des règles spéciales (cadeau surprise, pause douceur, pièce rigolote, échange amical, arc-en-ciel).
+Système de scoring en direct.
+Merci O3 Mini, et bonne génération de code !
+
+
+
+Prompt 3 
+les bonus sont des bonus activable par les possesseur et sont offert de façon aléatoir tout les 500 points
+
+prompt 4
+refait les 3 fichier code (html js et css) pour prendre en compte les nouvel règle
+
+prompt 5
+ajoute un écrant de game-over pour le perdant et enleve l'éffet piece rigolote
+
+prompt 6
+l'écrant de game OVER n'apparait que sur l'écrant de jeu de la personne qui a perdu et le bouton rejouer lui relance une partie
+
+prompt 7
+le bouton rejouer apparait dé le début de la game fait en sorte qu'il n'apparaise que aprés un game over
+
+prompt 8
+refait les block de code en prenant en compte cela
+
+prompt 9 
+améliore l'ia
+
+prompt 10
+réécrie les bloc de code en prenant en compte la nouvel ia
+
+prompt 11
+je ne gagne plus les bonus tout les 500 point regle le problem
+
+prompt12
+refait les block de code
+
+prompt 13
+ajoute un system de niveau plus le niveau est élever et :
+- plus les block tombent vite
+-plus le niveau est haut et plus le score de complétion de ligne est élever 
+- le niveau n'est pas partagé entre le joueur et l'ia
+- le niveau augment tous les 1000 point
+
+prompt 14 
+quand le joueur ou l'ia perd ça n'arrete pas la partie de lautre joueur
+
+prompt 15 
+refait les 3 bloc (js, html, css)
+
+prompt 16
+le jeu crash quand l'ia arrive vers le haut de son tableau (un peux avant de perdre)
+
+prompt 17
+réécrie les 3 block
+
+prompt 18
+la vitesse max (donc au level 10) est en *10
+
+prompt 19
+ajoute du son quand :
+- un groupe de cube touche un sol
+- une ligne est détruite
+- un game over est fait
+les fichier son seron dans un dossier appeler bgs
+
+prompt 20
+les bgs du tetris sont en fichier ogg réécrie moi le js
+
+prompt 21
+le game over ne se joue que pour le joueur ajoute une musique qui se joue 
+- le fichier musique sera dans un dossier ost
+- quand le joueur passe au niveau 4 la musique s'arrete et une nouvelle musique se joue
+- les fichier musique sont en .mp3
+prompt 22
+Uncaught (in promise) NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
+Ajoute moi un bouton jouer pour lancer la game et la musique
